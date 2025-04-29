@@ -37,12 +37,10 @@ function initializeSpeechRecognition() {
 
 // Process command (shared between voice and text input)
 async function processCommand(command) {
-    if (!command) {
-        alert('Silakan masukkan perintah.');
-        return;
-    }
-
     try {
+        console.log(`Processing command: ${command}`);
+
+        // Send request to backend
         const response = await fetch('/api/wit-ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -50,13 +48,17 @@ async function processCommand(command) {
         });
 
         if (!response.ok) {
+            console.error('Error: Failed to send request to backend');
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        handleWitResponse(data, command);
+        console.log('Response from backend:', data);
+
+        // Handle response
+        handleWitResponse(data);
     } catch (error) {
-        console.error('Error processing command:', error);
+        console.error('Error processing command:', error.message);
         outputDiv.textContent = 'Terjadi kesalahan saat memproses perintah.';
     }
 }
